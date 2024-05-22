@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, Image, TouchableWithoutFeedback, TouchableOpaci
 import Modal from 'react-native-modal';
 // import { Image } from 'react-native-svg';
 const data = ['Login', 'Sign Up'];
-export default function Navbar(): any {
+export default function Navbar({navigation}): any {
 
   const [ismodalopen, setmodalopen] = useState(false);
   return (
@@ -20,9 +20,9 @@ export default function Navbar(): any {
         </View>
         <View style={[styles.navsub, styles.search_acc_box]} >
           <TouchableWithoutFeedback><Image source={require('../assets/user.png')} style={styles.user} /></TouchableWithoutFeedback>
-          <View style={styles.searchbox}>
+          <TouchableWithoutFeedback onPress={()=>{navigation.navigate('Search')}}><View style={styles.searchbox}>
             <Image source={require('../assets/search.png')} style={styles.search} />
-          </View>
+          </View></TouchableWithoutFeedback>
         </View>
         
 

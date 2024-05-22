@@ -25,6 +25,7 @@ import Oscarpage from './components/Oscars/Oscarpage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Modal from 'react-native-modal';
+import Search from './components/Search/Search';
 
 
 const Stack =createNativeStackNavigator();
@@ -32,8 +33,8 @@ function App(): React.JSX.Element {
   
   return (
     <SafeAreaView style={style.mainapp}>
-      <Navbar />
       <NavigationContainer>
+        {/* <Navbar/> */}
         <Stack.Navigator initialRouteName='HOME' 
             screenOptions={({ route }) => ({
               headerShown:false
@@ -48,10 +49,9 @@ function App(): React.JSX.Element {
             })}
             >
           <Stack.Screen name="HOME" component={Wrapper}  />
-          <Stack.Screen
-          name="OSCAR" component={Oscarpage}
-            />
+          <Stack.Screen name="OSCAR" component={Oscarpage}/>
           <Stack.Screen name="Second" component={Secondpage} />
+          <Stack.Screen name="Search" component={Search} />
 
 
         </Stack.Navigator>

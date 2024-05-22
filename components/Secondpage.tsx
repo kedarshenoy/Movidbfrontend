@@ -8,11 +8,13 @@ import Secondsection from './Secondpage/Secondsection';
 import * as Progress from 'react-native-progress';
 import Thirdsection from './Secondpage/Thirdsection';
 import Footer from './Footer';
+import Navbar from './Navbar';
 
-export default function Secondpage({route}:any) {
+export default function Secondpage({route,navigation}:any) {
     const {name ,img, date, progress} =route.params;
   return (
     <View>
+    <Navbar navigation={navigation}/>
     <ScrollView style={{position:'relative'}}>
     <View style={styles.mainback}>
         <View style={styles.mainslidemenubar}>
@@ -58,7 +60,7 @@ export default function Secondpage({route}:any) {
 
     </ScrollView>
 
-    <View style={{paddingTop:20,paddingBottom:10, backgroundColor:'#032541',position:'absolute',bottom:0,width:'100%'}}>
+    <View style={{paddingTop:20,paddingBottom:10, backgroundColor:'#032541',position:'absolute',bottom:0,width:'100%',height:170}}>
             <View style={{ flexDirection:'row', justifyContent:'center'}}>
                 <Image source={require('../assets/watch/netflix.jpg')} style={{width:40,height:36}}/>
                 <View style={{paddingLeft:10}}>

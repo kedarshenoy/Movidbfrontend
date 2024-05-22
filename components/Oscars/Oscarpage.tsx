@@ -4,10 +4,13 @@ import React from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import Oscarpagesub from './Oscarpagesub';
 import Footer from '../Footer';
+import Navbar from '../Navbar';
 
-export default function Oscarpage() {
+export default function Oscarpage({navigation}:any) {
   return (
-    <ScrollView>
+      <View>
+        <Navbar navigation={navigation}/>
+            <ScrollView>
     <View style={styles.oscarpage}>
       <View style={styles.oscardropdownrow}>
         <View><Text style={{ color: 'black' }}>Overview <Image style={{height:10,width:10}} source={require('../../assets/arrows/down.png')}  /></Text></View>
@@ -44,6 +47,7 @@ export default function Oscarpage() {
     <Footer />
 
     </ScrollView>
+      </View>
   )
 }
 

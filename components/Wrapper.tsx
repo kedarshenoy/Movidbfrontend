@@ -21,7 +21,7 @@ export default function Wrapper({navigation}:any) {
     <View>
       <ScrollView  >
         <View style={styles.main}>
-          {/* <Navbar /> */}
+          <Navbar navigation={navigation}/>
           <Welcome />
           <Oscar navigation={navigation}/>
           <Trending navigation={navigation} />
