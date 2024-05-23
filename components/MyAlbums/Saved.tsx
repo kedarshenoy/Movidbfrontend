@@ -4,17 +4,16 @@ import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'rea
 import React from 'react';
 import * as Progress from 'react-native-progress';
 
-export default function Moviecard({favmovies}:any) {
-
+export default function Saved({savedmovies}:any) {
 
     const rendermovies =()=>{
         const arr:any=[];
-        favmovies.map((item,index)=>{
+        savedmovies.map((item,index)=>{
             arr.push(
                 <View style={styles.moviecards} key={index}>
                 <View>
                 <TouchableOpacity><Image source={{uri:`https://image.tmdb.org/t/p/w500/${item.poster_path}`}} style={styles.imagecard}/></TouchableOpacity>
-                    <Image source={require('../assets/dotsmenu.png')} style={styles.menudot}/>
+                    <Image source={require('../../assets/dotsmenu.png')} style={styles.menudot}/>
                     <Progress.Circle size={34} color={'green'} progress={item.vote_average/10} unfilledColor={'black'} borderColor={'black'} borderWidth={1} showsText={true}  style={styles.ratings} textStyle={styles.progresstext} />
                 </View>
                 <View style={styles.moviedescbox}>

@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, TouchableWithoutFeedback, TouchableOpacity, FlatList, Linking } from 'react-native';
 import Modal from 'react-native-modal';
 // import { Image } from 'react-native-svg';
-const data = ['Login', 'Sign Up'];
-export default function Navbar({navigation}): any {
+// const data = ['Login', 'Sign Up'];
+export default function Navbar({navigation}:any): any {
 
   const [ismodalopen, setmodalopen] = useState(false);
   return (
@@ -15,19 +15,17 @@ export default function Navbar({navigation}): any {
         </View>
         <View style={styles.navsub}>
           <Text>
-            <Image source={require('../assets/logo.png')} style={styles.logo} />
+          <TouchableWithoutFeedback onPress={()=>{navigation.navigate('HOME')}}><Image source={require('../assets/logo.png')} style={styles.logo} /></TouchableWithoutFeedback>
           </Text>
         </View>
         <View style={[styles.navsub, styles.search_acc_box]} >
-          <TouchableWithoutFeedback><Image source={require('../assets/user.png')} style={styles.user} /></TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={()=>{navigation.navigate('MyAlbum')}}><Image source={require('../assets/user.png')} style={styles.user} /></TouchableWithoutFeedback>
           <TouchableWithoutFeedback onPress={()=>{navigation.navigate('Search')}}><View style={styles.searchbox}>
             <Image source={require('../assets/search.png')} style={styles.search} />
           </View></TouchableWithoutFeedback>
         </View>
-        
 
       </View>
- 
       <Modal visible={ismodalopen} onRequestClose={() => { setmodalopen(!ismodalopen); }}
         // animationIn="slideInDown"
         // animationOut="slideOutUp"
@@ -40,9 +38,9 @@ export default function Navbar({navigation}): any {
 
           <TouchableOpacity onPress={() => { setmodalopen(!ismodalopen) }}><Image source={require('../assets/arrows/backicon.png')} style={styles.backarrow} /></TouchableOpacity>
           <View>
-          <TouchableOpacity onPress={() => Linking.openURL("https://kedarshenoy.pages.dev/home")}><Text style={styles.navmenumain}>Movies</Text></TouchableOpacity>
-          <TouchableOpacity onPress={() => Linking.openURL("https://kedarshenoy.pages.dev/home")}><Text style={styles.navmenumain}>TV Shows</Text></TouchableOpacity>
-          <TouchableOpacity onPress={() => Linking.openURL("https://kedarshenoy.pages.dev/home")}><Text style={styles.navmenumain}>People</Text></TouchableOpacity>
+          <TouchableOpacity onPress={() =>{ navigation.navigate('Search'); setmodalopen(!ismodalopen);}}><Text style={styles.navmenumain}>Movies</Text></TouchableOpacity>
+          <TouchableOpacity onPress={() =>{ navigation.navigate('Search'); setmodalopen(!ismodalopen);}}><Text style={styles.navmenumain}>TV Shows</Text></TouchableOpacity>
+          <TouchableOpacity onPress={() =>{ navigation.navigate('MyAlbum'); setmodalopen(!ismodalopen);}}><Text style={styles.navmenumain}>My Albums</Text></TouchableOpacity>
           </View>
 
           <FlatList style={{marginTop:20}}
@@ -101,6 +99,7 @@ const styles = StyleSheet.create({
   user: {
     height: 22.4,
     width: 22.4,
+    marginRight:10,
   },
   search: {
     height: 24.64,

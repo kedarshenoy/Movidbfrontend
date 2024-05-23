@@ -26,6 +26,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Modal from 'react-native-modal';
 import Search from './components/Search/Search';
+import MyAlbums from './components/MyAlbums/MyAlbums';
 
 
 const Stack =createNativeStackNavigator();
@@ -52,6 +53,8 @@ function App(): React.JSX.Element {
           <Stack.Screen name="OSCAR" component={Oscarpage}/>
           <Stack.Screen name="Second" component={Secondpage} />
           <Stack.Screen name="Search" component={Search} />
+          <Stack.Screen name="MyAlbum" component={MyAlbums} />
+
 
 
         </Stack.Navigator>
