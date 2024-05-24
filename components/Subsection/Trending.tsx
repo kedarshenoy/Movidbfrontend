@@ -3,75 +3,53 @@ import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, FlatList }
 import React, { useEffect } from 'react';
 import * as Progress from 'react-native-progress';
 import { useState } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
 
 
-export default function Trending({navigation}) {
+export default function Trending({ navigation }: any) {
     const [selected, setseleceted] = useState(true);
-    const [selectedoption, setselectedoption] = useState('Today');
-    const [data, setdata] = useState(['Today', 'This week', 'This month']);
-    const [apidata, setapidata] = useState([
-        {
-            name: 'Openhimer',
-            img: 'link',
-            progress: 0.94,
-            date: 'Jan 01,2024',
-        },
-        {
-            name: 'Kong',
-            img: 'link',
-            progress: 0.71,
-            date: 'MAR 29,2024',
-        },
-        {
-            name: 'Kingdom of Apes',
-            img: 'link',
-            progress: 0.72,
-            date: 'May 08,2024',
-        },
-        {
-            name: 'Abigail',
-            img: 'link',
-            progress: 0.94,
-            date: 'Apr 18,2024',
-        },
-        {
-            name: 'Openhimer',
-            img: 'link',
-            progress: 0.94,
-            date: 'Jan 01,2024',
-        },
-        {
-            name: 'Openhimer',
-            img: 'link',
-            progress: 0.94,
-            date: 'Jan 01,2024',
-        },
-        {
-            name: 'Openhimer',
-            img: 'link',
-            progress: 0.94,
-            date: 'Jan 01,2024',
-        },
-    ]);
+    const [selectedoption, setselectedoption] = useState('all');
+    const [data, setdata] = useState('All');
+    const [apidata, setapidata] = useState([]);
+    const [isLoading, setisLoading] = useState(true);
 
 
 
 
-    const fetchData = async (trend:any) => {
-        try {
-            const response = await fetch(`http://192.168.42.245:5402/trending?trend=${trend.toLowerCase()}`);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+    // const fetchData = async (trend:any) => {
+    //     try {
+    //         const response = await fetch(`http://192.168.42.245:5402/trending?trend=${trend.toLowerCase()}`);
+    //         if (!response.ok) {
+    //             throw new Error('Network response was not ok');
+    //         }
+    //         const result = await response.json();
+    //         setapidata(result);
+    //         // console.log(result);
+    //     } catch (error) {
+    //         console.error("Error while getting data", error);
+    //     }
+    // };
+
+    const fetchData = (selectedoptions: any): any => {
+        // setisLoading(true);
+        const url = `https://api.themoviedb.org/3/trending/${selectedoptions}/day`;
+        const options = {
+            method: 'GET',
+            headers: {
+                accept: 'application/json',
+                Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0MmU1M2EyNmMxZTFkNjM0MDYzYzMwYWE5OGI4ZjQxZCIsInN1YiI6IjY2NGM4Mjg2ODU1YmVhOTBmMjFlMWE0ZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.kd0louauA4pQ-65kPFd7jAGPjvd_yFd2aBMoTZIxT5U'
             }
-            const result = await response.json();
-            setapidata(result);
-            // console.log(result);
-        } catch (error) {
-            console.error("Error while getting data", error);
-        }
-    };
+        };
 
+        fetch(url, options)
+            .then(res => res.json())
+            .then(json => {
+                setapidata(json.results);
+                setisLoading(false);
+                // console.log(json.results)
+            })
+            .catch(err => console.error('error:' + err));
+    };
     useEffect(() => {
         fetchData(selectedoption);
     }, [selectedoption]);
@@ -80,17 +58,18 @@ export default function Trending({navigation}) {
     const render = () => {
         const arr: any = [];
         apidata.map((item, index) => {
+            const progressvalue = item.vote_average ? item.vote_average / 10 : item.popularity / 10;
             arr.push(
                 <View style={styles.moviecards} key={index}>
                     <View>
-                        <TouchableOpacity onPress={()=>navigation.navigate('Second',{name:item.name,progress:item.progress,date:item.date,img:item.img})}><Image source={{uri: item.img}} style={styles.imagecard} /></TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate('Second', { id: item.id })}><Image source={{ uri: `https://image.tmdb.org/t/p/w500/${item.poster_path ? item.poster_path : item.profile_path}` }} style={styles.imagecard} /></TouchableOpacity>
                         {/* <TouchableOpacity onPress={()=>navigation.navigate('Second')}><Image source={require('../../assets/Trending/openhimer.jpg')} style={styles.imagecard} /></TouchableOpacity> */}
                         <Image source={require('../../assets/dotsmenu.png')} style={styles.menudot} />
-                        <Progress.Circle size={34} color={'green'} progress={item.progress} unfilledColor={'black'} borderColor={'black'} borderWidth={1} showsText={true} style={styles.ratings} textStyle={styles.progresstext} />
+                        <Progress.Circle size={34} color={'green'} progress={progressvalue} unfilledColor={'black'} borderColor={'black'} borderWidth={1} showsText={true} style={styles.ratings} textStyle={styles.progresstext} />
                     </View>
                     <View style={styles.moviedescbox}>
-                        <Text style={styles.moviedesc}>{item.name}</Text>
-                        <Text style={styles.moviedesc} >{item.date}</Text>
+                        <Text style={styles.moviename} ellipsizeMode="tail" numberOfLines={1}>{item.name ? item.name : item.title}</Text>
+                        <Text style={styles.moviedate} >{item.release_date ? item.release_date : item.first_air_date}</Text>
 
                     </View>
                 </View>
@@ -100,16 +79,22 @@ export default function Trending({navigation}) {
         return arr;
     }
 
+    const skeleton = () => {
+        return (
+            <View style={styles.moviecards0} >
+            </View>
+        );
+    };
+
     return (
         <View style={styles.moviesection} >
             <View style={styles.moviesectionheadingview}>
                 <Text style={styles.moviesectionheading}>Trending</Text>
                 <View style={styles.dropdownsection}>
-                    
                     <TouchableOpacity style={styles.dropdown} onPress={() => setseleceted(!selected)}>
-                        <Text style={styles.dropdownhead}>{selectedoption}</Text>
+                        <Text style={styles.dropdownhead}>{data}</Text>
                         {
-                            selected ? <Image source={require('../../assets/arrows/arrowdown.png')} style={styles.arowhead}/> : <Image style={styles.arowhead} source={require('../../assets/arrows/arrowup.png')}/>
+                            selected ? <Image source={require('../../assets/arrows/arrowdown.png')} style={styles.arowhead} /> : <Image style={styles.arowhead} source={require('../../assets/arrows/arrowup.png')} />
                         }
                         {/* <Text>⋀</Text> */}
 
@@ -118,14 +103,20 @@ export default function Trending({navigation}) {
                         !selected
                             ?
                             <View style={styles.dropdowncontainer}>
-                                <FlatList data={data} renderItem={({ item, index }) => {
-                                    return (
-                                        <TouchableOpacity key={index}>
-                                            {/* {item} */}
-                                            <Text style={styles.dropdownitem} onPress={() => { setselectedoption(item); setseleceted(!selected) }}>{item}</Text>
-                                        </TouchableOpacity>
-                                    );
-                                }} />
+                             
+
+                                <TouchableOpacity>
+                                    <Text style={styles.dropdownitem} onPress={() => { setselectedoption('all');setdata('ALL'); setseleceted(!selected) }}>All</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity>
+                                    <Text style={styles.dropdownitem} onPress={() => { setselectedoption('movie');setdata('Movies'); setseleceted(!selected) }}>Movies</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity>
+                                    <Text style={styles.dropdownitem} onPress={() => { setselectedoption('tv');setdata('TV'); setseleceted(!selected) }}>TV</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity>
+                                    <Text style={styles.dropdownitem} onPress={() => { setselectedoption('person');setdata('Person'); setseleceted(!selected) }}>Person</Text>
+                                </TouchableOpacity>
                             </View>
                             :
                             null
@@ -138,23 +129,8 @@ export default function Trending({navigation}) {
             <View style={styles.mainsection}>
                 <ScrollView horizontal >
                     {
-                        render()
+                        !isLoading ? render() : skeleton()
                     }
-                    {/* <View style={styles.moviecards}>
-                        <View>
-                            <TouchableOpacity><Image source={require('../../assets/Trending/openhimer.jpg')} style={styles.imagecard} /></TouchableOpacity>
-                            <Image source={require('../../assets/dotsmenu.png')} style={styles.menudot} />
-                            <Progress.Circle size={34} color={'green'} progress={0.65} unfilledColor={'black'} borderColor={'black'} borderWidth={1} showsText={true} style={styles.ratings} textStyle={styles.progresstext} />
-                        </View>
-                        <View style={styles.moviedescbox}>
-                            <Text style={styles.moviedesc}> Oppenhimer</Text>
-                            <Text style={styles.moviedesc} > Jan 01,2024</Text>
-
-                        </View>
-                    </View> */}
-
-
-
                     {/* <View style={styles.moviecards}>
                         <View>
                             <TouchableOpacity><Image source={require('../../assets/Trending/openhimer.jpg')} style={styles.imagecard} /></TouchableOpacity>
@@ -214,13 +190,23 @@ const styles = StyleSheet.create({
         borderRadius: 100,
     },
     moviecards: {
-        padding: 10,
+        // padding: 10,
         marginBottom: 20,
+        width: 135,
+        marginRight: 20,
 
+    },
+    moviecards0: {
+        height: 220,
+        width: 145,
+        borderWidth: 0.8,
+        marginBottom: 20,
+        borderRadius: 6,
+        borderColor: 'lightgray'
     },
     progresstext: {
         color: 'white',
-        fontSize: 11,
+        fontSize: 10,
     },
     moviedescbox: {
         marginTop: 20,
@@ -232,6 +218,7 @@ const styles = StyleSheet.create({
     mainsection: {
         flexDirection: 'row',
         paddingTop: 20,
+        paddingLeft: 20
     },
     moviesection: {
         backgroundColor: 'white',
@@ -298,8 +285,30 @@ const styles = StyleSheet.create({
         fontWeight: '500',
 
     },
-    arowhead:{
-        height:10,
-        width:10,
+    arowhead: {
+        height: 10,
+        width: 10,
     },
-})
+
+
+    moviename: {
+        color: 'black',
+        fontSize: 16,
+        fontWeight: '600',
+        // width: '50%',
+    },
+    moviedate: {
+        color: 'black',
+        fontSize: 12,
+        fontWeight: '300',
+    },
+});
+
+
+
+// const [isLoading,setisLoading] = useState(true);
+// After loading data setloading false
+// <ScrollView horizontal >
+// {
+//     !isLoading ? render() : skeleton()
+// }

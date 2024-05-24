@@ -1,9 +1,10 @@
 /* eslint-disable prettier/prettier */
 import {Image, StyleSheet, Text, View,TextInput, TouchableOpacity} from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import { Line } from 'react-native-svg';
 
-export default function Welcome() {
+export default function Welcome({navigation}) {
+  const [text,settext]=useState('');
   return (
     <View style={styles.mainbox}>
       <Image style={styles.mainbck} source={require('../assets/main.jpg')}/>
@@ -13,8 +14,8 @@ export default function Welcome() {
 
 
           <View style={styles.inputdiv}>
-              <TextInput style={styles.input} placeholder="Search..." placeholderTextColor="black"/>
-              <TouchableOpacity style={styles.inputsubmitopbox}><Text style={styles.inputsubmit}>Search</Text></TouchableOpacity>
+              <TextInput style={styles.input} placeholder="Search..." placeholderTextColor="black" value={text} onChangeText={settext}/>
+              <TouchableOpacity style={styles.inputsubmitopbox} onPress={()=>{navigation.navigate('Search',{searchQuery:text});}}><Text style={styles.inputsubmit} >Search</Text></TouchableOpacity>
           </View>
       </View>
     </View>

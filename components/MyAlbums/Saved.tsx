@@ -4,7 +4,27 @@ import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'rea
 import React from 'react';
 import * as Progress from 'react-native-progress';
 
-export default function Saved({savedmovies}:any) {
+export default function Saved({savedmovies,handleSavedBtnPress,navigation}:any) {
+
+    const removefromlist = (id) => {
+
+
+        const url = 'https://api.themoviedb.org/3/account/21281323/watchlist';
+        const options = {
+            method: 'POST',
+            headers: {
+                accept: 'application/json',
+                'content-type': 'application/json',
+                Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0MmU1M2EyNmMxZTFkNjM0MDYzYzMwYWE5OGI4ZjQxZCIsInN1YiI6IjY2NGM4Mjg2ODU1YmVhOTBmMjFlMWE0ZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.kd0louauA4pQ-65kPFd7jAGPjvd_yFd2aBMoTZIxT5U'
+            },
+            body: JSON.stringify({ media_type: 'movie', media_id: id, watchlist: false })
+        };
+
+        fetch(url, options)
+            .then(res => res.json())
+            .then(json => handleSavedBtnPress('watchlist'))
+            .catch(err => console.error('error:' + err));
+    }
 
     const rendermovies =()=>{
         const arr:any=[];
@@ -12,8 +32,8 @@ export default function Saved({savedmovies}:any) {
             arr.push(
                 <View style={styles.moviecards} key={index}>
                 <View>
-                <TouchableOpacity><Image source={{uri:`https://image.tmdb.org/t/p/w500/${item.poster_path}`}} style={styles.imagecard}/></TouchableOpacity>
-                    <Image source={require('../../assets/dotsmenu.png')} style={styles.menudot}/>
+                <TouchableOpacity onPress={()=>navigation.navigate('Second',{id:item.id})}><Image source={{uri:`https://image.tmdb.org/t/p/w500/${item.poster_path}`}} style={styles.imagecard}/></TouchableOpacity>
+                <TouchableOpacity style={styles.menudotview} onPress={async ()=>{await removefromlist(item.id); }}><Image source={require('../../assets/bin.png')} style={styles.menudot}  /></TouchableOpacity>
                     <Progress.Circle size={34} color={'green'} progress={item.vote_average/10} unfilledColor={'black'} borderColor={'black'} borderWidth={1} showsText={true}  style={styles.ratings} textStyle={styles.progresstext} />
                 </View>
                 <View style={styles.moviedescbox}>
@@ -78,13 +98,16 @@ const styles = StyleSheet.create({
     moviesection:{
         backgroundColor:'white',
     },
-    menudot:{
-        height:25,
-        width:25,
-        position:'absolute',
-        right:8,
-        top:8,
-        opacity:0.6,
+    menudot: {
+        height: 25,
+        width: 25,
+
+        opacity: 0.6,
+    },
+    menudotview:{
+        position: 'absolute',
+        right: -8,
+        top: 8,
     },
     moviename: {
         color: 'black',

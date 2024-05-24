@@ -2,22 +2,22 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 
-export default function Secondsection() {
+export default function Secondsection({tagline,overview,date}:any) {
   return (
     <View>
       <View style={styles.certificationbox}>
       <View style={styles.certificationboxsub}>
           <View style={styles.certification}>
             <Text style={styles.certificationtext}>UA</Text></View>
-            <Text style={styles.certificationtext}>2024-03-29(IN) •1h55m ▶ Plat Trailer</Text>
+            <Text style={styles.certificationtext}>{date}(IN) •1h55m ▶ Plat Trailer</Text>
       </View>
         <Text style={styles.certificationtext}>Science Fiction, Action, Adventure</Text>
       </View>
 
       <View style={styles.descriptionbox}>
-          <Text style={{fontSize:17}}>Rise together or fall alone.</Text>
+          <Text style={{fontSize:17}}>{tagline}</Text>
           <Text style={styles.overviewhead}>Overview</Text>
-          <Text style={styles.desctext}>Following their explosive showdown, Godzilla and Kong must reunite against a colossal undiscovered threat hidden within our world, challenging their very existence – and our own.</Text>
+          <Text style={styles.desctext}>{overview}</Text>
               <View style={styles.directorsbox}>
                 <View style={styles.directorsboxrow}>
                     <View style={styles.directorsboxrowitem}>

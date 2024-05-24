@@ -5,10 +5,11 @@ import * as Progress from 'react-native-progress';
 import { useState, useEffect } from 'react';
 
 
-export default function Whatspopular({navigation}:any) {
-    const [selected, setseleceted] = useState(true);
-    const [selectedoption, setselectedoption] = useState('Streaming');
-    const [data, setdata] = useState(['Streaming', 'OnTV', 'For Rent', 'In Theaters']);
+export default function Whatspopular({ navigation }: any) {
+    const [selected, setSelected] = useState(true);
+    const [selectedoption, setSelectedOption] = useState('popular');
+    const [data, setData] = useState('Popular');
+    const [isLoading, setisLoading] = useState(true);
     const [apidata, setapidata] = useState([
         {
             name: 'Blade Runner',
@@ -18,22 +19,42 @@ export default function Whatspopular({navigation}:any) {
         },
     ]);
 
-    const fetchData = async (trend: any) => {
-        try {
-            const response = await fetch(`http://192.168.42.245:5402/popular?popular=${trend}`);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+    const fetchData = (selectedoptions: any): any => {
+        const url = `https://api.themoviedb.org/3/movie/${selectedoptions}`;
+        const options = {
+            method: 'GET',
+            headers: {
+                accept: 'application/json',
+                Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0MmU1M2EyNmMxZTFkNjM0MDYzYzMwYWE5OGI4ZjQxZCIsInN1YiI6IjY2NGM4Mjg2ODU1YmVhOTBmMjFlMWE0ZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.kd0louauA4pQ-65kPFd7jAGPjvd_yFd2aBMoTZIxT5U'
             }
-            const result = await response.json();
-            setapidata(result);
-            // console.log(result);
-        } catch (error) {
-            console.error("Error while getting data", error);
-        }
+        };
+
+        fetch(url, options)
+            .then(res => res.json())
+            .then(json => {
+                setapidata(json.results);
+                setisLoading(false);
+                // console.log('///////////////////////////////////////////////////////////////////////////')
+                // console.log(json.results);
+            })
+            .catch(err => console.error('error:' + err));
+    };
+    const skeleton = () => {
+        return (
+            <View style={styles.moviecards0} >
+            </View>
+        );
     };
 
+
+
     useEffect(() => {
-        fetchData(selectedoption);
+        // fetchData(selectedoption);
+        const timeoutId = setTimeout(() => {
+            fetchData(selectedoption);
+        }, 3000);
+
+        return () => clearTimeout(timeoutId);
     }, [selectedoption]);
 
 
@@ -43,14 +64,15 @@ export default function Whatspopular({navigation}:any) {
             arr.push(
                 <View style={styles.moviecards} key={index}>
                     <View>
-                        <TouchableOpacity onPress={()=>navigation.navigate('Second',{name:item.name,progress:item.progress,date:item.date,img:item.img})}><Image source={{ uri: item.img }} style={styles.imagecard} /></TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate('Second', { id: item.id })}><Image source={{ uri: `https://image.tmdb.org/t/p/w500/${item.poster_path ? item.poster_path : item.profile_path}` }} style={styles.imagecard} /></TouchableOpacity>
                         {/* <TouchableOpacity><Image source={require('../../assets/Trending/openhimer.jpg')} style={styles.imagecard} /></TouchableOpacity> */}
                         <Image source={require('../../assets/dotsmenu.png')} style={styles.menudot} />
-                        <Progress.Circle size={34} color={'green'} progress={item.progress} unfilledColor={'black'} borderColor={'black'} borderWidth={1} showsText={true} style={styles.ratings} textStyle={styles.progresstext} />
+                        <Progress.Circle size={34} color={'green'} progress={item.vote_average ? item.vote_average / 10 : item.popularity / 10} unfilledColor={'black'} borderColor={'black'} borderWidth={1} showsText={true} style={styles.ratings} textStyle={styles.progresstext} />
                     </View>
                     <View style={styles.moviedescbox}>
-                        <Text style={styles.moviedesc}>{item.name}</Text>
-                        <Text style={styles.moviedesc} >{item.date}</Text>
+                        <Text style={styles.moviename} ellipsizeMode="tail" numberOfLines={1}>{item.name ? item.name : item.title}</Text>
+                        <Text style={styles.moviedate} >{item.release_date ? item.release_date : item.first_air_date}</Text>
+
 
                     </View>
                 </View>
@@ -65,8 +87,8 @@ export default function Whatspopular({navigation}:any) {
             <View style={styles.moviesectionheadingview}>
                 <Text style={styles.moviesectionheading}>Whats Popular</Text>
                 <View style={styles.dropdownsection}>
-                    <TouchableOpacity style={styles.dropdown} onPress={() => setseleceted(!selected)}>
-                        <Text style={styles.dropdownhead}>{selectedoption}</Text>
+                    <TouchableOpacity style={styles.dropdown} onPress={() => setSelected(!selected)}>
+                        <Text style={styles.dropdownhead}>{data}</Text>
                         {
                             selected ? <Image source={require('../../assets/arrows/arrowdown.png')} style={styles.arowhead} /> : <Image style={styles.arowhead} source={require('../../assets/arrows/arrowup.png')} />
                         }
@@ -77,14 +99,24 @@ export default function Whatspopular({navigation}:any) {
                         !selected
                             ?
                             <View style={styles.dropdowncontainer}>
-                                <FlatList data={data} renderItem={({ item, index }) => {
-                                    return (
-                                        <TouchableOpacity key={index}>
-                                            {/* {item} */}
-                                            <Text style={styles.dropdownitem} onPress={() => { setselectedoption(item); setseleceted(!selected) }}>{item}</Text>
-                                        </TouchableOpacity>
-                                    );
-                                }} />
+
+                                <TouchableOpacity >
+                                    <Text style={styles.dropdownitem} onPress={() => { setSelectedOption('popular'); setData('Popular'); setSelected(!selected); }}>Popular</Text>
+                                </TouchableOpacity>
+
+                                
+                    <TouchableOpacity >
+                      <Text style={styles.dropdownitem} onPress={() => { setSelectedOption('now_playing');setData('Now Playing'); setSelected(!selected); }}>Now Playing</Text>
+                    </TouchableOpacity>
+
+                    
+                    <TouchableOpacity >
+                      <Text style={styles.dropdownitem} onPress={() => { setSelectedOption('top_rated');setData('Top Rated'); setSelected(!selected); }}>Top Rated</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity >
+                      <Text style={styles.dropdownitem} onPress={() => { setSelectedOption('upcoming');setData('Upcoming'); setSelected(!selected); }}>Upcoming</Text>
+                    </TouchableOpacity>
                             </View>
                             :
                             null
@@ -97,7 +129,7 @@ export default function Whatspopular({navigation}:any) {
             <View style={styles.mainsection}>
                 <ScrollView horizontal >
                     {
-                        render()
+                        !isLoading ? render() : skeleton()
                     }
                     {/* <View style={styles.moviecards}>
                         <View>
@@ -132,9 +164,19 @@ const styles = StyleSheet.create({
         borderRadius: 100,
     },
     moviecards: {
-        padding: 10,
+        // padding: 10,
         marginBottom: 20,
+        width: 135,
+        marginRight: 20,
 
+    },
+    moviecards0: {
+        height: 220,
+        width: 145,
+        borderWidth: 0.8,
+        marginBottom: 20,
+        borderRadius: 6,
+        borderColor: 'lightgray',
     },
     progresstext: {
         color: 'white',
@@ -151,6 +193,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         // paddingVertical: 20,
         paddingTop: 20,
+        paddingLeft: 20,
 
     },
     moviesection: {
@@ -219,5 +262,17 @@ const styles = StyleSheet.create({
     arowhead: {
         height: 10,
         width: 10,
+    },
+
+    moviename: {
+        color: 'black',
+        fontSize: 16,
+        fontWeight: '600',
+        // width: '50%',
+    },
+    moviedate: {
+        color: 'black',
+        fontSize: 12,
+        fontWeight: '300',
     },
 })

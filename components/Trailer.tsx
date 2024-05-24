@@ -16,11 +16,11 @@ export default function Trailer() {
 
   const [selectedIMG, setSelectedIMG] = useState(images[0]);
   const [selected, setSelected] = useState(true);
-  const [selectedOption, setSelectedOption] = useState('Popular');
-  const [data, setData] = useState(['Popular', 'On TV', 'Rent', 'Streaming', 'Theater']);
+  const [selectedOption, setSelectedOption] = useState('popular');
+  const [data, setData] = useState('Popular');
   const [apiData, setApiData] = useState([
     {
-      name: 'Oppenheimer',
+      name: 'Boys',
       img: 'https://github.com/kedarshenoy/movieDBimgs/blob/master/trailers/Theater/1.jpg?raw=true',
       desc: 'Jul 21, 2023',
     },
@@ -28,47 +28,65 @@ export default function Trailer() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setSelectedIMG(prevIMG  => {
+      setSelectedIMG(prevIMG => {
         const currentIndex = images.indexOf(prevIMG);
         const nextIndex = (currentIndex + 1) % images.length;
         return images[nextIndex];
       });
-    }, 5000); // Change image every 5 seconds
+    }, 5000); // Change bck  5 seconds
 
-    return () => clearInterval(interval); // Cleanup the interval on component unmount
+    return () => clearInterval(interval);
   }, []);
 
   const handleImagePress = (youtubeLink) => {
     Linking.openURL(youtubeLink).catch(err => console.error("Couldn't load page", err));
   };
 
-  const fetchData = async (trend) => {
-    try {
-      const response = await fetch(`http://192.168.42.245:5402/trailers?trailer=${trend}`);
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const result = await response.json();
-      setApiData(result);
-    } catch (error) {
-      console.error("Error while getting data", error);
-    }
-  };
+  // const fetchData = async (trend) => {
+  //   try {
+  //     const response = await fetch(`http://192.168.165.245:5402/trailers?trailer=${trend}`);
+  //     if (!response.ok) {
+  //       throw new Error('Network response was not ok');
+  //     }
+  //     const result = await response.json();
+  //     setApiData(result);
+  //   } catch (error) {
+  //     console.error("Error while getting data", error);
+  //   }
+  // };
 
+
+  const fetchData = (type) => {
+    const url = `https://api.themoviedb.org/3/movie/${type}`;
+    const options = {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0MmU1M2EyNmMxZTFkNjM0MDYzYzMwYWE5OGI4ZjQxZCIsInN1YiI6IjY2NGM4Mjg2ODU1YmVhOTBmMjFlMWE0ZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.kd0louauA4pQ-65kPFd7jAGPjvd_yFd2aBMoTZIxT5U'
+      }
+    };
+
+    fetch(url, options)
+      .then(res => res.json())
+      .then(json => {setApiData(json.results);})
+      .catch(err => console.error('error:' + err));
+  }
   useEffect(() => {
     fetchData(selectedOption);
   }, [selectedOption]);
 
   const render = () => {
     return apiData.map((item, index) => (
+      
       <View style={styles.trailerCardMain} key={index}>
-        <TouchableOpacity onPress={() => handleImagePress(`https://youtu.be/uYPbbksJxIg?si=tTmsawYpmP6IvAly`)}>
-          <Image source={{ uri: item.img }} style={styles.trailerImgs} />
+        {/* {console.log(item.title)} */}
+        <TouchableOpacity onPress={() => handleImagePress(`https://www.youtube.com/results?search_query=${item.title} trailer`)}>
+          <Image source={{ uri:`https://image.tmdb.org/t/p/w500/${item.backdrop_path}` }} style={styles.trailerImgs} />
         </TouchableOpacity>
         <Image source={require('../assets/dotsmenu.png')} style={styles.menuDot} />
         <Image source={require('../assets/play.png')} style={styles.playBtn} />
-        <Text style={styles.trailerName}>{item.name}</Text>
-        <Text style={styles.trailerDesc}>{item.desc}</Text>
+        <Text style={styles.trailerName}>{item.original_title}</Text>
+        <Text style={styles.trailerDesc}>{item.release_date}</Text>
       </View>
     ));
   };
@@ -81,7 +99,7 @@ export default function Trailer() {
           <Text style={styles.trailerHead}>Latest Trailers</Text>
           <View>
             <TouchableOpacity style={styles.dropdown} onPress={() => setSelected(!selected)}>
-              <Text style={styles.dropdownHead}>{selectedOption}</Text>
+              <Text style={styles.dropdownHead}>{data}</Text>
               {selected ? (
                 <Image source={require('../assets/arrows/arrowdowntrailer.png')} style={styles.arrowHead} />
               ) : (
@@ -90,14 +108,21 @@ export default function Trailer() {
             </TouchableOpacity>
             {!selected && (
               <View style={styles.dropdownContainer}>
-                <FlatList
-                  data={data}
-                  renderItem={({ item, index }) => (
-                    <TouchableOpacity key={index}>
-                      <Text style={styles.dropdownItem} onPress={() => { setSelectedOption(item); setSelected(!selected); }}>{item}</Text>
+                <TouchableOpacity >
+                      <Text style={styles.dropdownItem} onPress={() => { setSelectedOption('popular');setData('Popular'); setSelected(!selected); }}>Popular</Text>
                     </TouchableOpacity>
-                  )}
-                />
+
+                    <TouchableOpacity >
+                      <Text style={styles.dropdownItem} onPress={() => { setSelectedOption('upcoming');setData('Upcoming'); setSelected(!selected); }}>Upcoming</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity >
+                      <Text style={styles.dropdownItem} onPress={() => { setSelectedOption('now_playing');setData('In Theaters'); setSelected(!selected); }}>In Theaters</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity >
+                      <Text style={styles.dropdownItem} onPress={() => { setSelectedOption('top_rated');setData('Top Rated'); setSelected(!selected); }}>Top Rated</Text>
+                    </TouchableOpacity>
               </View>
             )}
           </View>
@@ -139,7 +164,7 @@ const styles = StyleSheet.create({
     width: '100%',
     textAlign: 'center',
     fontSize: 19.2,
-    fontWeight:'600',
+    fontWeight: '600',
     textShadowColor: 'black', // The color of the outline
     textShadowOffset: { width: -1, height: 1 },
     textShadowRadius: 1,
@@ -149,7 +174,7 @@ const styles = StyleSheet.create({
     width: '100%',
     textAlign: 'center',
     marginBottom: 17,
-    fontWeight:'600',
+    fontWeight: '600',
     textShadowColor: 'black', // The color of the outline
     textShadowOffset: { width: -1, height: 1 },
     textShadowRadius: 1,

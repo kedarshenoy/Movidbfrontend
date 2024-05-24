@@ -48,6 +48,10 @@ export default function MyAlbums({ navigation }: any) {
             .catch(err => console.error('error:' + err));
     };
 
+    const handleSavedBtnPress = (type) => {
+        // Fetch saved movies again or any other logic to update saved movies
+        fetchLikedMovies(type);
+    };
 
     return (
         <View>
@@ -80,7 +84,7 @@ export default function MyAlbums({ navigation }: any) {
                                     islikedopen
                                         ?
                                         <View style={styles.optiondrop}>
-                                            <Moviecard favmovies={likedMovies} />
+                                            <Moviecard favmovies={likedMovies} navigation={navigation} handleSavedBtnPress={handleSavedBtnPress} />
                                             {}
                                         </View>
                                         :
@@ -92,7 +96,7 @@ export default function MyAlbums({ navigation }: any) {
                                 <TouchableOpacity style={styles.btntouchable} onPress={() => { setsavelateropen(!savelateropen); fetchLikedMovies('watchlist') }}>
                                     <View style={styles.btndiv}>
                                         <View style={styles.btnrow}>
-                                            <Text style={styles.btntext}>Saved</Text>
+                                            <Text style={styles.btntext}>Watch Later</Text>
                                             {
                                                 !savelateropen
                                                     ?
@@ -108,7 +112,7 @@ export default function MyAlbums({ navigation }: any) {
                                     savelateropen
                                         ?
                                         <View style={styles.optiondrop}>
-                                            <Saved savedmovies={savedmovies} />
+                                            <Saved savedmovies={savedmovies}  navigation={navigation}  handleSavedBtnPress={handleSavedBtnPress}/>
                                         </View>
                                         :
                                         null
@@ -146,10 +150,10 @@ export default function MyAlbums({ navigation }: any) {
                     </View>
 
                 </View>
-            <Footer/>
+            {/* <Footer/> */}
             </ScrollView>
         </View>
-    )
+    );
 }
 
 const styles = StyleSheet.create({

@@ -230,7 +230,7 @@
 //     moviedesc: {
 //         color: 'black',
 //         marginTop:20,
-        
+
 //         // padding:5,
 //         // width:'70%',
 
@@ -254,11 +254,12 @@ import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View 
 import React, { useState, useEffect } from 'react'
 import Navbar from '../Navbar'
 
-export default function Search({ navigation }: any) {
+export default function Search({ navigation,route }: any) {
+    const { searchQuery: initialSearchQuery } = route.params || {};
     const [issortopen, setissortopen] = useState(false);
     const [isdropdown2, setisdropdown2] = useState(false);
     const [isdropdown3, setisdropdown3] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQuery, setSearchQuery] = useState(initialSearchQuery || '');
     const [result, setResult] = useState([]);
 
     useEffect(() => {
@@ -322,7 +323,7 @@ export default function Search({ navigation }: any) {
                         </View>
                     )}
 
-                    <TouchableOpacity style={styles.margintop} onPress={() => { setisdropdown2(!isdropdown2); }}>
+                    {/* <TouchableOpacity style={styles.margintop} onPress={() => { setisdropdown2(!isdropdown2); }}>
                         <View style={styles.btndiv}>
                             <View style={styles.btnrow}>
                                 <Text style={styles.btntext}>Sort</Text>
@@ -338,8 +339,8 @@ export default function Search({ navigation }: any) {
                         <View style={styles.optiondrop}>
                             <Text style={{ color: 'black' }}>year</Text>
                         </View>
-                    )}
-
+                    )} */}
+                    {/* 
                     <TouchableOpacity style={styles.margintop} onPress={() => { setisdropdown3(!isdropdown3); }}>
                         <View style={styles.btndiv}>
                             <View style={styles.btnrow}>
@@ -357,7 +358,7 @@ export default function Search({ navigation }: any) {
                         <View style={styles.optiondrop}>
                             <Text style={{ color: 'black' }}>year</Text>
                         </View>
-                    )}
+                    )} */}
 
                     <TouchableOpacity style={styles.searchbtn}>
                         <Text style={styles.searchtext}>Search</Text>
@@ -366,15 +367,17 @@ export default function Search({ navigation }: any) {
 
                 {/* Display search results */}
                 <View style={styles.imageview}>
-                    {result.map((movie) => (
-                        <View key={movie.id} style={styles.moviebox}>
-                            <Image style={styles.movieimg} source={{ uri: `https://image.tmdb.org/t/p/w200${movie.poster_path}` }} />
-                            <View style={styles.descbox}>
-                                <Text style={styles.moviename}>{movie.title}</Text>
-                                <Text style={styles.moviedate}>{movie.release_date}</Text>
-                                <Text style={styles.moviedesc} numberOfLines={3} ellipsizeMode="tail">{movie.overview}</Text>
+                    {result.map((movie,index) => (
+                        <TouchableOpacity onPress={()=>navigation.navigate('Second',{id:movie.id})} key={index}>
+                            <View key={movie.id} style={styles.moviebox}>
+                                <Image style={styles.movieimg} source={{ uri: `https://image.tmdb.org/t/p/w200${movie.poster_path}` }} />
+                                <View style={styles.descbox}>
+                                    <Text style={styles.moviename}>{movie.title}</Text>
+                                    <Text style={styles.moviedate}>{movie.release_date}</Text>
+                                    <Text style={styles.moviedesc} numberOfLines={3} ellipsizeMode="tail">{movie.overview}</Text>
+                                </View>
                             </View>
-                        </View>
+                        </TouchableOpacity>
                     ))}
                 </View>
             </ScrollView>
