@@ -9,11 +9,11 @@ This project is a personal endeavor for learning purposes, aiming to replicate t
 - **react-native-progress**: Used for displaying progress indicators.
 
 ## Main Screens
-- **HOME**: Primary screen for browsing movies.
-- **OSCAR**: Screen dedicated to Oscar-related content.
-- **Second**: Secondary screen for additional movie details.
+- **HOME**: Primary screen for browsing movies and serves as the landing page.
+- **OSCAR**: Screen dedicated to displaying award-winning and nominated Movies, Actors, Directors, and Actresses.
+- **Second**: Secondary screen that appears when a user selects a movie from the HOME page, displaying detailed movie information and providing options to like or save the movie.
 - **Search**: Screen for searching movies.
-- **MyAlbum**: Screen for managing user-created albums.
+- **MyAlbum**: Screen for managing user-saved movies, including those for watch later, liked, and rated movies.
 
 ## Development Environment
 To work on this project, ensure you have the following prerequisites:
@@ -24,7 +24,7 @@ To work on this project, ensure you have the following prerequisites:
 - **React Native CLI**: Install globally for running React Native commands.
 
 ## API
-The project utilizes the API provided by TMDb. For ease of use, the API key is included in the code.
+The project utilizes the API provided by TMDb.
 
 ## Requirements
 To set up the project, make sure you have the following:
